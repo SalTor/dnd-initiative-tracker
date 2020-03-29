@@ -1,0 +1,70 @@
+@import './styles/base';
+
+.appHeader {
+    display: flex;
+    align-items: center;
+    margin-bottom: 25px;
+
+    > h1 {
+        text-decoration: underline;
+        margin-right: 15px;
+    }
+
+    > button {
+        height: 30px;
+    }
+}
+
+.formAndTracker {
+    display: flex;
+}
+
+.draggableWrapper {
+    > div {
+        margin: 0;
+        display: flex;
+        border: 1px solid lightgrey;
+        border-radius: 2px;
+    }
+}
+
+.entityList {
+    padding: 8px;
+    background-color: white;
+    flex-grow: 1;
+    min-height: 200px;
+
+    &.m_isDraggingOver {
+        background-color: skyblue;
+    }
+}
+
+.entity {
+    display: flex;
+    border: 1px solid lightgrey;
+    padding: 8px;
+    margin-bottom: 8px;
+    border-radius: 2px;
+    background-color: white;
+
+    &.m_isDragging {
+        background-color: lightgreen;
+    }
+}
+
+.formWrapper {
+    display: flex;
+    flex-direction: column;
+    margin-right: 25px;
+    padding: 8px;
+    border: 1px solid lightgrey;
+    border-radius: 4px;
+
+    input:not([type='radio']) {
+        margin-bottom: 20px;
+    }
+
+    button {
+        margin-top: 20px;
+    }
+}

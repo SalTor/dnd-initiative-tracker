@@ -1,0 +1,15 @@
+button {
+    border: 1px solid lightgrey;
+    border-radius: 4px;
+    cursor: pointer;
+
+    &:focus {
+        outline: none;
+    }
+
+    &:hover {
+        background: cornflowerblue;
+        border-color: cornflowerblue;
+        color: white;
+    }
+}

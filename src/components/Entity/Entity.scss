@@ -16,6 +16,12 @@
         font-size: 12px;
     }
 
+    &.m_isDragging {
+        .entity__initiative {
+            cursor: grabbing;
+        }
+    }
+
     &__name {
         margin: 0;
     }

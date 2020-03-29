@@ -1,23 +1,5 @@
 import React, { useState } from 'react'
-import styled from 'styled-components'
 import cuid from 'cuid'
-
-const FormWrapper = styled.div`
-    display: flex;
-    flex-direction: column;
-    margin-right: 25px;
-    padding: 8px;
-    border: 1px solid lightgrey;
-    border-radius: 4px;
-
-    input:not([type='radio']) {
-        margin-bottom: 20px;
-    }
-
-    button {
-        margin-top: 20px;
-    }
-`
 
 const ENTITY_TYPES = {
     player: 'entity-type::player',
@@ -51,7 +33,7 @@ const EntityForm = props => {
     const handleKeyDown = event => (event.key === 'Escape' ? handleFormSubmit : null)
 
     return (
-        <FormWrapper>
+        <div className="formWrapper">
             <label htmlFor="name">Entity name</label>
             <input
                 id="name"
@@ -108,7 +90,7 @@ const EntityForm = props => {
             <button type="button" disabled={!canSubmit} onClick={handleFormSubmit} onKeyDown={handleKeyDown}>
                 Submit
             </button>
-        </FormWrapper>
+        </div>
     )
 }
 

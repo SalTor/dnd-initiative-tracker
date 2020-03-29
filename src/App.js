@@ -1,8 +1,7 @@
 import React from 'react'
-import styled from 'styled-components'
 import '@atlaskit/css-reset'
 import { DragDropContext } from 'react-beautiful-dnd'
-import { map, orderBy } from 'lodash-es'
+import { map, orderBy, toNumber } from 'lodash-es'
 
 import { useSessionStorageState } from './utils/customHooks'
 
@@ -13,42 +12,7 @@ import Column from './components/Column/Column'
 
 import initialData from './initialData'
 
-import './App.css'
-
-const PageHeader = styled.div`
-    display: flex;
-    align-items: center;
-    margin-bottom: 25px;
-
-    > h1 {
-        text-decoration: underline;
-        margin-right: 15px;
-    }
-    > button {
-        height: 30px;
-        background: none;
-        border-radius: 4px;
-    }
-`
-
-const PageTitle = styled.h1``
-
-const FormAndTracker = styled.div`
-    display: flex;
-`
-
-const DraggableWrapper = styled.div`
-    > div {
-        margin: 0;
-    }
-`
-
-const Container = styled.div`
-    display: flex;
-    margin: 8px;
-    border: 1px solid lightgrey;
-    border-radius: 2px;
-`
+import './App.scss'
 
 const App = () => {
     const [state, setState] = useSessionStorageState(initialData, CACHE_IDS.initiative_tracker)
@@ -128,14 +92,14 @@ const App = () => {
         })
     }
 
-    const onOrderBy = (column_id, property, order) => () => {
+    const onOrderBy = column_id => () => {
         const column = state.columns[column_id]
         const { entities } = state
         const vals = map(
             orderBy(
                 map(column.entityIds, id => entities[id]),
-                [property],
-                [order],
+                [entity => toNumber(entity.initiative)],
+                ['desc'],
             ),
             entity => entity.id,
         )
@@ -153,19 +117,19 @@ const App = () => {
 
     return (
         <div style={{ padding: 10 }}>
-            <PageHeader>
-                <PageTitle>Initiative Tracker</PageTitle>
+            <div className="appHeader">
+                <h1>Initiative Tracker</h1>
                 <button type="button" onClick={() => sessionStorage.removeItem(CACHE_IDS.initiative_tracker)}>
                     Clear Cache
                 </button>
-            </PageHeader>
+            </div>
 
-            <FormAndTracker>
+            <div className="formAndTracker">
                 <EntityForm onEntityCreated={onEntityCreated} />
 
-                <DraggableWrapper>
+                <div className="draggableWrapper">
                     <DragDropContext onDragEnd={onDragEnd}>
-                        <Container>
+                        <div className="test">
                             {state.columnOrder.map(columnId => {
                                 const column = state.columns[columnId]
                                 const entities = column.entityIds.map(entityId => state.entities[entityId])
@@ -174,10 +138,10 @@ const App = () => {
                                     <Column onOrderBy={onOrderBy} key={column.id} column={column} entities={entities} />
                                 )
                             })}
-                        </Container>
+                        </div>
                     </DragDropContext>
-                </DraggableWrapper>
-            </FormAndTracker>
+                </div>
+            </div>
         </div>
     )
 }
