@@ -33,9 +33,7 @@ const Entity = props => {
                     </div>
 
                     <div className="entity__rightSide">
-                        <p className="entity__hitpoints">
-                            {props.entity.hitpoints} / {props.entity.hitpoints}
-                        </p>
+                        <p className="entity__hitpoints">{props.entity.hitpoints}HP</p>
                     </div>
                 </EntityDiv>
             )}

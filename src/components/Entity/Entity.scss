@@ -4,9 +4,12 @@
     align-items: center;
     border: 1px dashed lightgrey;
     padding: 8px;
-    margin-bottom: 8px;
     border-radius: 4px;
     background-color: white;
+
+    &:not(:last-of-type) {
+        margin-bottom: 8px;
+    }
 
     &__initiative {
         display: flex;
@@ -20,11 +23,16 @@
         color: rgba(black, 0.75);
         border-radius: 4px;
         font-size: 12px;
+
+        &.m_isDragging {
+            cursor: grabbing;
+        }
     }
 
     &__hitpoints {
         margin: 0;
         text-align: right;
+        font-size: 10px;
     }
 
     &__name {
@@ -38,10 +46,6 @@
 
     &.m_isDragging {
         background-color: lightgreen;
-
-        .entity__initiative {
-            cursor: grabbing;
-        }
     }
 
     &.m_player {
