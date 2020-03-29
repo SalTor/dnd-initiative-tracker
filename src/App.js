@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import '@atlaskit/css-reset'
 import { DragDropContext } from 'react-beautiful-dnd'
+import { map, orderBy } from 'lodash-es'
 
 import { useSessionStorageState } from './utils/customHooks'
 
@@ -127,6 +128,29 @@ const App = () => {
         })
     }
 
+    const onOrderBy = (column_id, property, order) => () => {
+        const column = state.columns[column_id]
+        const { entities } = state
+        const vals = map(
+            orderBy(
+                map(column.entityIds, id => entities[id]),
+                [property],
+                [order],
+            ),
+            entity => entity.id,
+        )
+        setState({
+            ...state,
+            columns: {
+                ...state.columns,
+                [column_id]: {
+                    ...column,
+                    entityIds: vals,
+                },
+            },
+        })
+    }
+
     return (
         <div style={{ padding: 10 }}>
             <PageHeader>
@@ -146,7 +170,9 @@ const App = () => {
                                 const column = state.columns[columnId]
                                 const entities = column.entityIds.map(entityId => state.entities[entityId])
 
-                                return <Column key={column.id} column={column} entities={entities} />
+                                return (
+                                    <Column onOrderBy={onOrderBy} key={column.id} column={column} entities={entities} />
+                                )
                             })}
                         </Container>
                     </DragDropContext>

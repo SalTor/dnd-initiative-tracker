@@ -1,8 +1,11 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Droppable } from 'react-beautiful-dnd'
+import { toNumber } from 'lodash-es'
 
 import Entity from '../Entity/Entity'
+
+import './Column.scss'
 
 const Container = styled.div`
     width: 300px;
@@ -25,8 +28,16 @@ const EntityList = styled.div`
 
 const Column = props => {
     return (
-        <Container>
-            <Title>{props.column.title}</Title>
+        <Container className="column">
+            <div className="column__header">
+                <Title>{props.column.title}</Title>
+                <button
+                    type="button"
+                    onClick={props.onOrderBy(props.column.id, entity => toNumber(entity.initiative), ['desc'])}
+                >
+                    sort
+                </button>
+            </div>
             <Droppable droppableId={props.column.id}>
                 {(provided, snapshot) => (
                     <EntityList
