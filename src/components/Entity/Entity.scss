@@ -1,0 +1,22 @@
+.entity {
+    display: flex;
+    align-items: center;
+
+    &__initiative {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 25px;
+        width: 25px;
+        margin-right: 8px;
+        background: rgba(orange, 0.75);
+        text-align: center;
+        color: rgba(black, 0.75);
+        border-radius: 4px;
+        font-size: 12px;
+    }
+
+    &__name {
+        margin: 0;
+    }
+}

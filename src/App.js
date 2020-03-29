@@ -5,37 +5,35 @@ import { DragDropContext } from 'react-beautiful-dnd'
 
 import { useSessionStorageState } from './utils/customHooks'
 
+import { CACHE_IDS } from './constants'
+
+import EntityForm from './components/EntityForm/EntityForm'
 import Column from './components/Column/Column'
+
+import initialData from './initialData'
 
 import './App.css'
 
-const initialData = {
-    entities: {
-        'entity-1': { id: 'entity-1', content: 'Entity 1' },
-        'entity-2': { id: 'entity-2', content: 'Entity 2' },
-        'entity-3': { id: 'entity-3', content: 'Entity 3' },
-        'entity-4': { id: 'entity-4', content: 'Entity 4' },
-        'entity-5': { id: 'entity-5', content: 'Entity 5' },
-        'entity-6': { id: 'entity-6', content: 'Entity 6' },
-    },
-    columns: {
-        'column-1': {
-            id: 'column-1',
-            title: 'Alive',
-            entityIds: ['entity-1', 'entity-2', 'entity-3', 'entity-4', 'entity-5'],
-        },
-        'column-2': {
-            id: 'column-2',
-            title: 'Killed',
-            entityIds: [],
-        },
-    },
-    columnOrder: ['column-1', 'column-2'],
-}
+const PageHeader = styled.div`
+    display: flex;
+    align-items: center;
+    margin-bottom: 25px;
 
-const PageTitle = styled.h1`
-    text-decoration: underline;
-    margin-bottom: 15px;
+    > h1 {
+        text-decoration: underline;
+        margin-right: 15px;
+    }
+    > button {
+        height: 30px;
+        background: none;
+        border-radius: 4px;
+    }
+`
+
+const PageTitle = styled.h1``
+
+const FormAndTracker = styled.div`
+    display: flex;
 `
 
 const DraggableWrapper = styled.div`
@@ -52,7 +50,7 @@ const Container = styled.div`
 `
 
 const App = () => {
-    const [state, setState] = useSessionStorageState(initialData, 'initiative-tracker')
+    const [state, setState] = useSessionStorageState(initialData, CACHE_IDS.initiative_tracker)
 
     const onDragEnd = result => {
         const { destination, source, draggableId } = result
@@ -111,22 +109,36 @@ const App = () => {
         }
     }
 
+    const onEntityCreated = newEntity => {
+        console.log('newEntity', newEntity)
+        // TODO:  Create new entity
+    }
+
     return (
         <div style={{ padding: 10 }}>
-            <PageTitle>Initiative Tracker</PageTitle>
+            <PageHeader>
+                <PageTitle>Initiative Tracker</PageTitle>
+                <button type="button" onClick={() => sessionStorage.removeItem(CACHE_IDS.initiative_tracker)}>
+                    Clear Cache
+                </button>
+            </PageHeader>
 
-            <DraggableWrapper>
-                <DragDropContext onDragEnd={onDragEnd}>
-                    <Container>
-                        {state.columnOrder.map(columnId => {
-                            const column = state.columns[columnId]
-                            const entities = column.entityIds.map(entityId => state.entities[entityId])
+            <FormAndTracker>
+                <EntityForm onEntityCreated={onEntityCreated} />
 
-                            return <Column key={column.id} column={column} entities={entities} />
-                        })}
-                    </Container>
-                </DragDropContext>
-            </DraggableWrapper>
+                <DraggableWrapper>
+                    <DragDropContext onDragEnd={onDragEnd}>
+                        <Container>
+                            {state.columnOrder.map(columnId => {
+                                const column = state.columns[columnId]
+                                const entities = column.entityIds.map(entityId => state.entities[entityId])
+
+                                return <Column key={column.id} column={column} entities={entities} />
+                            })}
+                        </Container>
+                    </DragDropContext>
+                </DraggableWrapper>
+            </FormAndTracker>
         </div>
     )
 }

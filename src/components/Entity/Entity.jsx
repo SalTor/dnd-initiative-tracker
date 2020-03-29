@@ -2,6 +2,8 @@ import React from 'react'
 import styled from 'styled-components'
 import { Draggable } from 'react-beautiful-dnd'
 
+import './Entity.scss'
+
 const Container = styled.div`
     border: 1px solid lightgrey;
     padding: 8px;
@@ -12,21 +14,20 @@ const Container = styled.div`
     display: flex;
 `
 
-const Handle = styled.div`
-    width: 20px;
-    height: 20px;
-    background-color: orange;
-    border-radius: 4px;
-    margin-right: 8px;
-`
-
 const Entity = props => {
     return (
         <Draggable draggableId={props.entity.id} index={props.index}>
             {(provided, snapshot) => (
-                <Container {...provided.draggableProps} ref={provided.innerRef} isDragging={snapshot.isDragging}>
-                    <Handle {...provided.dragHandleProps} />
-                    {props.entity.content}
+                <Container
+                    className="entity"
+                    {...provided.draggableProps}
+                    ref={provided.innerRef}
+                    isDragging={snapshot.isDragging}
+                >
+                    <div className="entity__initiative" {...provided.dragHandleProps}>
+                        {props.entity.initiative}
+                    </div>
+                    <p className="entity__name">{props.entity.name}</p>
                 </Container>
             )}
         </Draggable>

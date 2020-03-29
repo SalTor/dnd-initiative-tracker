@@ -5,7 +5,7 @@ import { Droppable } from 'react-beautiful-dnd'
 import Entity from '../Entity/Entity'
 
 const Container = styled.div`
-    width: 220px;
+    width: 300px;
     margin: 8px;
     border: 1px solid lightgrey;
     border-radius: 2px;
@@ -20,7 +20,7 @@ const EntityList = styled.div`
     padding: 8px;
     background-color: ${props => (props.isDraggingOver ? 'skyblue' : 'white')};
     flex-grow: 1;
-    min-height: 100px;
+    min-height: 200px;
 `
 
 const Column = props => {
