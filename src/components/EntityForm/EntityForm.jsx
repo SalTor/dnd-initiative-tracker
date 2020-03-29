@@ -1,10 +1,7 @@
 import React, { useState } from 'react'
 import cuid from 'cuid'
 
-const ENTITY_TYPES = {
-    player: 'entity-type::player',
-    enemy: 'entity-type::enemy',
-}
+import { ENTITY_TYPES } from '../../constants'
 
 const initialFormState = {
     name: '',
@@ -88,7 +85,7 @@ const EntityForm = props => {
             </label>
 
             <button type="button" disabled={!canSubmit} onClick={handleFormSubmit} onKeyDown={handleKeyDown}>
-                Submit
+                Add Entity
             </button>
         </div>
     )

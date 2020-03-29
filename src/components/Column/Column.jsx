@@ -14,7 +14,7 @@ const Column = props => {
         <div className="column">
             <div className="column__header">
                 <h3 className="column__title">{props.column.title}</h3>
-                <button type="button" onClick={props.onOrderBy(props.column.id)}>
+                <button type="button" onClick={props.onSort(props.column.id)}>
                     sort
                 </button>
             </div>

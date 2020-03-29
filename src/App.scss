@@ -23,32 +23,16 @@
     > div {
         margin: 0;
         display: flex;
-        border: 1px solid lightgrey;
-        border-radius: 2px;
     }
 }
 
 .entityList {
     padding: 8px;
-    background-color: white;
     flex-grow: 1;
     min-height: 200px;
 
     &.m_isDraggingOver {
         background-color: skyblue;
-    }
-}
-
-.entity {
-    display: flex;
-    border: 1px solid lightgrey;
-    padding: 8px;
-    margin-bottom: 8px;
-    border-radius: 2px;
-    background-color: white;
-
-    &.m_isDragging {
-        background-color: lightgreen;
     }
 }
 
@@ -59,6 +43,7 @@
     padding: 8px;
     border: 1px solid lightgrey;
     border-radius: 4px;
+    width: 250px;
 
     input:not([type='radio']) {
         margin-bottom: 20px;

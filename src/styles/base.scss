@@ -2,6 +2,7 @@ button {
     border: 1px solid lightgrey;
     border-radius: 4px;
     cursor: pointer;
+    transition: all 0.25s ease;
 
     &:focus {
         outline: none;

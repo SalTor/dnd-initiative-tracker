@@ -1,6 +1,12 @@
 .entity {
     display: flex;
+    justify-content: space-between;
     align-items: center;
+    border: 1px dashed lightgrey;
+    padding: 8px;
+    margin-bottom: 8px;
+    border-radius: 4px;
+    background-color: white;
 
     &__initiative {
         display: flex;
@@ -16,13 +22,33 @@
         font-size: 12px;
     }
 
+    &__hitpoints {
+        margin: 0;
+        text-align: right;
+    }
+
+    &__name {
+        margin: 0;
+    }
+
+    &__leftSide {
+        display: flex;
+        align-items: center;
+    }
+
     &.m_isDragging {
+        background-color: lightgreen;
+
         .entity__initiative {
             cursor: grabbing;
         }
     }
 
-    &__name {
-        margin: 0;
+    &.m_player {
+        border-color: darkcyan;
+    }
+
+    &.m_foe {
+        border-color: brown;
     }
 }

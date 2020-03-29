@@ -21,7 +21,9 @@ const App = () => {
         const { destination, source, draggableId } = result
 
         if (destination) {
-            if (destination.droppableId === source.droppableId && destination.index === source.index) {
+            const sameList = destination.droppableId === source.droppableId
+            const sameOrder = destination.index === source.index
+            if (sameList && sameOrder) {
                 return
             }
 
@@ -92,7 +94,7 @@ const App = () => {
         })
     }
 
-    const onOrderBy = column_id => () => {
+    const onOrderByInitiative = column_id => () => {
         const column = state.columns[column_id]
         const { entities } = state
         const vals = map(
@@ -135,7 +137,12 @@ const App = () => {
                                 const entities = column.entityIds.map(entityId => state.entities[entityId])
 
                                 return (
-                                    <Column onOrderBy={onOrderBy} key={column.id} column={column} entities={entities} />
+                                    <Column
+                                        onSort={onOrderByInitiative}
+                                        key={column.id}
+                                        column={column}
+                                        entities={entities}
+                                    />
                                 )
                             })}
                         </div>
