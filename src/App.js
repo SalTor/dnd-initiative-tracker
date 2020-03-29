@@ -109,9 +109,22 @@ const App = () => {
         }
     }
 
-    const onEntityCreated = newEntity => {
-        console.log('newEntity', newEntity)
-        // TODO:  Create new entity
+    const onEntityCreated = entity => {
+        const { column_1 } = state.columns
+        setState({
+            ...state,
+            entities: {
+                ...state.entities,
+                [entity.id]: entity,
+            },
+            columns: {
+                ...state.columns,
+                column_1: {
+                    ...column_1,
+                    entityIds: [...column_1.entityIds, entity.id],
+                },
+            },
+        })
     }
 
     return (

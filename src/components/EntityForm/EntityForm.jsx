@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
+import cuid from 'cuid'
 
 const FormWrapper = styled.div`
     display: flex;
@@ -23,27 +24,28 @@ const ENTITY_TYPES = {
     enemy: 'entity-type::enemy',
 }
 
+const initialFormState = {
+    name: '',
+    initiative: 0,
+    hitpoints: 0,
+    type: ENTITY_TYPES.enemy,
+}
+
 const EntityForm = props => {
-    const [formState, setFormState] = useState({
-        name: '',
-        initiative: 0,
-        hitpoints: 0,
-        type: ENTITY_TYPES.enemy,
-    })
+    const [formState, setFormState] = useState(initialFormState)
 
     const canSubmit = formState.name && formState.hitpoints > 0
 
     const handleInputChange = field => event => {
-        const value = event.target.type === 'checkbox' ? event.target.checked : event.target.value
         setFormState({
             ...formState,
-            [field]: value,
+            [field]: event.target.value,
         })
     }
 
     const handleFormSubmit = () => {
-        console.log('create entity for', formState)
-        props.onEntityCreated(formState)
+        props.onEntityCreated({ ...formState, id: cuid() })
+        setFormState(initialFormState)
     }
 
     const handleKeyDown = event => (event.key === 'Escape' ? handleFormSubmit : null)
@@ -51,7 +53,13 @@ const EntityForm = props => {
     return (
         <FormWrapper>
             <label htmlFor="name">Entity name</label>
-            <input id="name" type="text" value={formState.name} onChange={handleInputChange('name')} />
+            <input
+                id="name"
+                type="text"
+                value={formState.name}
+                onChange={handleInputChange('name')}
+                autoComplete="off"
+            />
 
             <label htmlFor="initiative">Entity intiative</label>
             <input
@@ -59,16 +67,23 @@ const EntityForm = props => {
                 type="number"
                 value={formState.initiative}
                 onChange={handleInputChange('initiative')}
+                autoComplete="off"
             />
 
             <label htmlFor="hitpoints">Entity hitpoints</label>
-            <input id="hitpoints" type="number" value={formState.hitpoints} onChange={handleInputChange('hitpoints')} />
+            <input
+                id="hitpoints"
+                type="number"
+                value={formState.hitpoints}
+                onChange={handleInputChange('hitpoints')}
+                autoComplete="off"
+            />
 
             <label htmlFor="playerOrFoe">
                 {(type => (
                     <input
                         type="radio"
-                        onChange={handleInputChange}
+                        onChange={handleInputChange('type')}
                         checked={formState.type === type}
                         name="type"
                         value={type}
@@ -81,7 +96,7 @@ const EntityForm = props => {
                 {(type => (
                     <input
                         type="radio"
-                        onChange={handleInputChange}
+                        onChange={handleInputChange('type')}
                         checked={formState.type === type}
                         name="type"
                         value={type}
