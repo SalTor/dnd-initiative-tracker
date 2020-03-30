@@ -18,16 +18,17 @@ const Column = props => {
                     sort
                 </button>
             </div>
+
             <Droppable droppableId={props.column.id}>
                 {(provided, snapshot) => (
                     <EntityList
-                        className={cn('entityList', snapshot.isDraggingOver && 'm_isDraggingOver')}
                         {...provided.droppableProps}
+                        className={cn('entityList', snapshot.isDraggingOver && 'm_isDraggingOver')}
                         ref={provided.innerRef}
                         isdraggingover={snapshot.isDraggingOver}
                     >
                         {props.entities.map((entity, index) => (
-                            <Entity key={entity.id} entity={entity} index={index} />
+                            <Entity {...props.entityProps} key={entity.id} entity={entity} index={index} />
                         ))}
                         {provided.placeholder}
                     </EntityList>

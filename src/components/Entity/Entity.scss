@@ -1,11 +1,14 @@
+$black75percent: #1b2b4b;
+
 .entity {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border: 1px dashed lightgrey;
+    border: 1px solid lightgrey;
     padding: 8px;
     border-radius: 4px;
     background-color: white;
+    color: $black75percent;
 
     &:not(:last-of-type) {
         margin-bottom: 8px;
@@ -18,11 +21,19 @@
         height: 25px;
         width: 25px;
         margin-right: 8px;
-        background: rgba(orange, 0.75);
+        background: #f6be6d;
+        border: 1px solid white;
         text-align: center;
-        color: rgba(black, 0.75);
         border-radius: 4px;
         font-size: 12px;
+
+        &.m_player {
+            border-color: darkcyan;
+        }
+
+        &.m_foe {
+            border-color: brown;
+        }
 
         &.m_isDragging {
             cursor: grabbing;
@@ -49,10 +60,12 @@
     }
 
     &.m_player {
+        background-color: #cee1e2;
         border-color: darkcyan;
     }
 
     &.m_foe {
+        background-color: #e5cccb;
         border-color: brown;
     }
 }

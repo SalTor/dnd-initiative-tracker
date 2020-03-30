@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import '@atlaskit/css-reset'
 import { DragDropContext } from 'react-beautiful-dnd'
 import { map, orderBy, toNumber } from 'lodash-es'
@@ -7,6 +7,7 @@ import { useSessionStorageState } from './utils/customHooks'
 
 import { CACHE_IDS } from './constants'
 
+import EntityEditor from './components/EntityEditor/EntityEditor'
 import EntityForm from './components/EntityForm/EntityForm'
 import Column from './components/Column/Column'
 
@@ -16,6 +17,7 @@ import './App.scss'
 
 const App = () => {
     const [state, setState] = useSessionStorageState(initialData, CACHE_IDS.initiative_tracker)
+    const [entityEditorState, setEntityEditorState] = useState({})
 
     const onDragEnd = result => {
         const { destination, source, draggableId } = result
@@ -142,6 +144,9 @@ const App = () => {
                                         key={column.id}
                                         column={column}
                                         entities={entities}
+                                        entityProps={{
+                                            onEditEntity: setEntityEditorState,
+                                        }}
                                     />
                                 )
                             })}
@@ -149,6 +154,14 @@ const App = () => {
                     </DragDropContext>
                 </div>
             </div>
+
+            <EntityEditor
+                {...entityEditorState}
+                onClose={() => setEntityEditorState({})}
+                onSave={entity => {
+                    console.log('entity', entity)
+                }}
+            />
         </div>
     )
 }

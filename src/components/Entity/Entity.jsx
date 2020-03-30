@@ -11,22 +11,20 @@ const EntityDiv = styled.div``
 
 const Entity = props => {
     const isType = (entity, type) => entity.type === type
+    const cssEntityType = isType(props.entity, ENTITY_TYPES.player) ? 'm_player' : 'm_foe'
 
     return (
         <Draggable draggableId={props.entity.id} index={props.index}>
             {(provided, snapshot) => (
                 <EntityDiv
-                    className={cn(
-                        'entity',
-                        snapshot.isDragging && 'm_isDragging',
-                        isType(props.entity, ENTITY_TYPES.player) ? 'm_player' : 'm_foe',
-                    )}
-                    ref={provided.innerRef}
-                    isdragging={snapshot.isDragging}
                     {...provided.draggableProps}
+                    ref={provided.innerRef}
+                    className={cn('entity', snapshot.isDragging && 'm_isDragging', cssEntityType)}
+                    isdragging={snapshot.isDragging}
+                    onClick={() => props.onEditEntity(props.entity)}
                 >
                     <div className="entity__leftSide">
-                        <div className="entity__initiative" {...provided.dragHandleProps}>
+                        <div className={cn('entity__initiative', cssEntityType)} {...provided.dragHandleProps}>
                             {props.entity.initiative}
                         </div>
                         <p className="entity__name">{props.entity.name}</p>
