@@ -7,8 +7,8 @@ import { useSessionStorageState } from './utils/customHooks'
 
 import { CACHE_IDS } from './constants'
 
+import EntityCreator from './components/EntityCreator/EntityCreator'
 import EntityEditor from './components/EntityEditor/EntityEditor'
-import EntityForm from './components/EntityForm/EntityForm'
 import Column from './components/Column/Column'
 
 import initialData from './initialData'
@@ -17,7 +17,8 @@ import './App.scss'
 
 const App = () => {
     const [state, setState] = useSessionStorageState(initialData, CACHE_IDS.initiative_tracker)
-    const [entityEditorState, setEntityEditorState] = useState({})
+    const [entityCreatorIsOpen, setEntityCreatorIsOpen] = useState(false)
+    const [entityBeingEdited, updateEntityBeingEdited] = useState({})
 
     const onDragEnd = result => {
         const { destination, source, draggableId } = result
@@ -94,6 +95,7 @@ const App = () => {
                 },
             },
         })
+        setEntityCreatorIsOpen(false)
     }
 
     const onOrderByInitiative = column_id => () => {
@@ -123,14 +125,25 @@ const App = () => {
         <div style={{ padding: 10 }}>
             <div className="appHeader">
                 <h1>Initiative Tracker</h1>
-                <button type="button" onClick={() => sessionStorage.removeItem(CACHE_IDS.initiative_tracker)}>
+
+                <button
+                    type="button"
+                    onClick={() => sessionStorage.removeItem(CACHE_IDS.initiative_tracker)}
+                    style={{ paddingRight: 15, paddingLeft: 15 }}
+                >
                     Clear Cache
+                </button>
+
+                <button
+                    type="button"
+                    onClick={() => setEntityCreatorIsOpen(true)}
+                    style={{ marginLeft: 10, paddingRight: 15, paddingLeft: 15 }}
+                >
+                    Add Entity
                 </button>
             </div>
 
             <div className="formAndTracker">
-                <EntityForm onEntityCreated={onEntityCreated} />
-
                 <div className="draggableWrapper">
                     <DragDropContext onDragEnd={onDragEnd}>
                         <div className="test">
@@ -145,7 +158,7 @@ const App = () => {
                                         column={column}
                                         entities={entities}
                                         entityProps={{
-                                            onEditEntity: setEntityEditorState,
+                                            onEditEntity: updateEntityBeingEdited,
                                         }}
                                     />
                                 )
@@ -155,9 +168,15 @@ const App = () => {
                 </div>
             </div>
 
+            <EntityCreator
+                isOpen={entityCreatorIsOpen}
+                onClose={() => setEntityCreatorIsOpen(false)}
+                onEntityCreated={onEntityCreated}
+            />
+
             <EntityEditor
-                {...entityEditorState}
-                onClose={() => setEntityEditorState({})}
+                entityBeingEdited={entityBeingEdited}
+                onClose={() => updateEntityBeingEdited(null)}
                 onSave={entity => {
                     console.log('entity', entity)
                 }}

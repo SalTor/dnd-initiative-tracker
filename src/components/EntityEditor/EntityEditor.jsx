@@ -1,30 +1,30 @@
 import React from 'react'
-import { isNil } from 'lodash-es'
+import { isNil, get as getAttr } from 'lodash-es'
+
+import EntityModal from '../EntityModal/EntityModal'
 
 import './EntityEditor.scss'
 
 const EntityEditor = props => {
     const handleSubmit = () => {}
 
-    if (isNil(props.id)) {
-        return null
-    }
+    const { entityBeingEdited } = props
+    const name = getAttr(entityBeingEdited, 'name')
+    const id = getAttr(entityBeingEdited, 'id')
 
     return (
-        <div className="entityEditor">
-            <div className="mask" />
-
+        <EntityModal isOpen={!isNil(id)} onClose={props.onClose}>
             <div className="formWrapper">
                 <div className="fieldsWrapper">
                     <label htmlFor="entityName">Name</label>
-                    <input type="text" value={props.name} onChange={handleSubmit} />
+                    <input type="text" value={name} onChange={handleSubmit} />
                 </div>
 
                 <button type="button" onClick={handleSubmit}>
                     Save Changes
                 </button>
             </div>
-        </div>
+        </EntityModal>
     )
 }
 

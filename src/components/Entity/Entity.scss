@@ -9,6 +9,7 @@ $black75percent: #1b2b4b;
     border-radius: 4px;
     background-color: white;
     color: $black75percent;
+    cursor: pointer;
 
     &:not(:last-of-type) {
         margin-bottom: 8px;
