@@ -150,10 +150,18 @@ const App = () => {
                             {state.columnOrder.map(columnId => {
                                 const column = state.columns[columnId]
                                 const entities = column.entityIds.map(entityId => state.entities[entityId])
+                                let actionBtn = null
+                                if (columnId === 'column_1') {
+                                    actionBtn = (
+                                        <button type="button" onClick={onOrderByInitiative(column.id)}>
+                                            sort
+                                        </button>
+                                    )
+                                }
 
                                 return (
                                     <Column
-                                        onSort={onOrderByInitiative}
+                                        actionBtn={actionBtn}
                                         key={column.id}
                                         column={column}
                                         entities={entities}
