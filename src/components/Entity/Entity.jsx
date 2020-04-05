@@ -24,9 +24,11 @@ const Entity = props => {
                     onClick={() => props.onEditEntity(props.entity)}
                 >
                     <div className="entity__leftSide">
-                        <div className={cn('entity__initiative', cssEntityType)} {...provided.dragHandleProps}>
-                            {props.entity.initiative}
-                        </div>
+                        <div
+                            className={cn('entity__initiative', cssEntityType)}
+                            {...provided.dragHandleProps}
+                            role="presentation"
+                        />
                         <p className="entity__name">{props.entity.name}</p>
                     </div>
 

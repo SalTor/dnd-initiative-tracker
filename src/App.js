@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import '@atlaskit/css-reset'
 import { DragDropContext } from 'react-beautiful-dnd'
-import { map, orderBy, toNumber } from 'lodash-es'
+import { get as getAttr, map, orderBy, toNumber } from 'lodash-es'
 
 import { useSessionStorageState } from './utils/customHooks'
 
@@ -121,6 +121,8 @@ const App = () => {
         })
     }
 
+    const entityFromState = entity => getAttr(state, `entities[${entity.id}]`) || {}
+
     return (
         <div style={{ padding: 10 }}>
             <div className="appHeader">
@@ -183,10 +185,18 @@ const App = () => {
             />
 
             <EntityEditor
-                entityBeingEdited={entityBeingEdited}
-                onClose={() => updateEntityBeingEdited(null)}
-                onSave={entity => {
-                    console.log('entity', entity)
+                entityBeingEdited={entityFromState(entityBeingEdited)}
+                onClose={() => updateEntityBeingEdited({})}
+                onEntityChanged={updatedEntity => {
+                    const { id } = updatedEntity
+                    const { entities } = state
+                    setState({
+                        ...state,
+                        entities: {
+                            ...entities,
+                            [id]: updatedEntity,
+                        },
+                    })
                 }}
             />
         </div>
