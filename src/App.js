@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import '@atlaskit/css-reset'
 import { DragDropContext } from 'react-beautiful-dnd'
-import { get as getAttr, map, orderBy, toNumber } from 'lodash-es'
+import { values, reduce, without, omit, get as getAttr, map, orderBy, toNumber } from 'lodash-es'
 
 import { useSessionStorageState } from './utils/customHooks'
 
@@ -123,10 +123,45 @@ const App = () => {
 
     const entityFromState = entity => getAttr(state, `entities[${entity.id}]`) || {}
 
+    const handleUpdateEntity = updatedEntity => {
+        const { id } = updatedEntity
+        const { entities } = state
+        setState({
+            ...state,
+            entities: {
+                ...entities,
+                [id]: updatedEntity,
+            },
+        })
+    }
+
+    const handleRemoveEntity = () => {
+        const entity = entityBeingEdited
+        const { entities, columns } = state
+        updateEntityBeingEdited({})
+        setState({
+            ...state,
+            columns: reduce(
+                values(columns),
+                (acc, col) => ({
+                    ...acc,
+                    [col.id]: {
+                        ...col,
+                        entityIds: without(col.entityIds, entity.id),
+                    },
+                }),
+                {},
+            ),
+            entities: omit(entities, [entity.id]),
+        })
+    }
+
     return (
         <div style={{ padding: 10 }}>
             <div className="appHeader">
-                <h1>Initiative Tracker</h1>
+                <h1 role="presentation" onClick={() => console.log(state)}>
+                    Initiative Tracker
+                </h1>
 
                 <button
                     type="button"
@@ -151,7 +186,7 @@ const App = () => {
                         <div className="test">
                             {state.columnOrder.map(columnId => {
                                 const column = state.columns[columnId]
-                                const entities = column.entityIds.map(entityId => state.entities[entityId])
+                                const entities = map(column.entityIds, entityId => state.entities[entityId])
                                 let actionBtn = null
                                 if (columnId === 'column_1') {
                                     actionBtn = (
@@ -187,17 +222,8 @@ const App = () => {
             <EntityEditor
                 entityBeingEdited={entityFromState(entityBeingEdited)}
                 onClose={() => updateEntityBeingEdited({})}
-                onEntityChanged={updatedEntity => {
-                    const { id } = updatedEntity
-                    const { entities } = state
-                    setState({
-                        ...state,
-                        entities: {
-                            ...entities,
-                            [id]: updatedEntity,
-                        },
-                    })
-                }}
+                onEntityChanged={handleUpdateEntity}
+                onEntityRemoved={handleRemoveEntity}
             />
         </div>
     )

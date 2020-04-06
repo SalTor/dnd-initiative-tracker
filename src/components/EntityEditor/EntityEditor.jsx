@@ -28,6 +28,10 @@ const EntityEditor = props => {
                     <label htmlFor="entityHitpoints">Hitpoints</label>
                     <input type="number" value={hitpoints} onChange={handleChange('hitpoints')} />
                 </div>
+
+                <button type="button" onClick={props.onEntityRemoved}>
+                    remove
+                </button>
             </div>
         </EntityModal>
     )

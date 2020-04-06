@@ -28,7 +28,9 @@ const Entity = props => {
                             className={cn('entity__initiative', cssEntityType)}
                             {...provided.dragHandleProps}
                             role="presentation"
-                        />
+                        >
+                            {props.entity.initiative}
+                        </div>
                         <p className="entity__name">{props.entity.name}</p>
                     </div>
 

@@ -17,8 +17,6 @@ const initialFormState = {
 const EntityCreator = props => {
     const [formState, setFormState] = useState(initialFormState)
 
-    const canSubmit = formState.name && formState.hitpoints > 0
-
     const handleInputChange = field => event => {
         setFormState({
             ...formState,
@@ -91,7 +89,7 @@ const EntityCreator = props => {
                     </label>
                 </div>
 
-                <button type="button" disabled={!canSubmit} onClick={handleFormSubmit} onKeyDown={handleKeyDown}>
+                <button type="button" onClick={handleFormSubmit} onKeyDown={handleKeyDown}>
                     Add Entity
                 </button>
             </div>
