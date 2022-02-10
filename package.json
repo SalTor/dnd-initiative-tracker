@@ -11,7 +11,7 @@
     "css-modules": "~0.3.0",
     "cuid": "~2.1.8",
     "lodash-es": "~4.17.15",
-    "node-sass": "~4.13.1",
+    "node-sass": "~7.0.0",
     "react": "^16.13.1",
     "react-beautiful-dnd": "~13.0.0",
     "react-dnd": "~10.0.2",
