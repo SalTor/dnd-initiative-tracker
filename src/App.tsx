@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import '@atlaskit/css-reset'
 import { DragDropContext } from 'react-beautiful-dnd'
 import { values, reduce, without, omit, get as getAttr, map, orderBy, toNumber } from 'lodash-es'
 
