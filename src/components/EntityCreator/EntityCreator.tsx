@@ -1,8 +1,7 @@
 import React, { useState } from 'react'
 import { v4 as uuid } from 'uuid'
 
-import { ENTITY_TYPES } from '../../constants'
-import { IEntity } from '../Entity/Entity'
+import { IEntity, EntityType } from '../Entity/Entity'
 
 import EntityModal from '../EntityModal/EntityModal'
 
@@ -11,14 +10,13 @@ import './EntityCreator.scss'
 const initialFormState = {
     name: '',
     initiative: 0,
-    hitpoints: 0,
-    type: ENTITY_TYPES.Enemy,
+    maxHitpoints: 0,
+    type: EntityType.Player,
 }
 
 interface Props {
-    isOpen: boolean
-    onClose: (next: boolean) => void
-    onEntityCreated: (entity: IEntity) => void
+    onClose(): void
+    onEntityCreated(entity: IEntity): void
 }
 
 const EntityCreator: React.FC<Props> = (props) => {
@@ -34,12 +32,12 @@ const EntityCreator: React.FC<Props> = (props) => {
         }
 
     const handleFormSubmit = () => {
-        props.onEntityCreated({ ...formState, id: uuid() })
+        props.onEntityCreated({ ...formState, hitpoints: formState.maxHitpoints, id: uuid() })
         setFormState(initialFormState)
     }
 
     return (
-        <EntityModal isOpen={props.isOpen} onClose={props.onClose}>
+        <EntityModal onClose={props.onClose}>
             <div className="formWrapper">
                 <div className="fieldsWrapper">
                     <label htmlFor="name">Entity name</label>
@@ -64,8 +62,8 @@ const EntityCreator: React.FC<Props> = (props) => {
                     <input
                         id="hitpoints"
                         type="number"
-                        value={formState.hitpoints}
-                        onChange={handleInputChange('hitpoints')}
+                        value={formState.maxHitpoints}
+                        onChange={handleInputChange('maxHitpoints')}
                         autoComplete="off"
                     />
 
@@ -73,9 +71,9 @@ const EntityCreator: React.FC<Props> = (props) => {
                         <input
                             type="radio"
                             onChange={handleInputChange('type')}
-                            checked={formState.type === ENTITY_TYPES.Player}
+                            checked={formState.type === EntityType.Player}
                             name="type"
-                            value={ENTITY_TYPES.Player}
+                            value={EntityType.Player}
                         />{' '}
                         Player
                     </label>
@@ -84,9 +82,9 @@ const EntityCreator: React.FC<Props> = (props) => {
                         <input
                             type="radio"
                             onChange={handleInputChange('type')}
-                            checked={formState.type === ENTITY_TYPES.Enemy}
+                            checked={formState.type === EntityType.Enemy}
                             name="type"
-                            value={ENTITY_TYPES.Enemy}
+                            value={EntityType.Enemy}
                         />{' '}
                         Foe
                     </label>

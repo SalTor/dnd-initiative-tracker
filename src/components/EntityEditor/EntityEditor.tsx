@@ -1,12 +1,10 @@
-import React, { ChangeEvent, useState } from 'react'
-import { isNil } from 'lodash-es'
+import React, { ChangeEvent } from 'react'
 
-import { IEntity } from '../Entity/Entity'
 import EntityModal from '../EntityModal/EntityModal'
 
 import './EntityEditor.scss'
 import { useAtom } from 'jotai'
-import { editEntityAtom } from '../../App'
+import { entityFocusAtom } from '../../App'
 
 type Props = {
     onEntityRemoved(id: string): void
@@ -15,7 +13,7 @@ type Props = {
 }
 
 const EntityEditor: React.FC<Props> = (props) => {
-    const [entity, updateEntity] = useAtom(editEntityAtom)
+    const [entity, updateEntity] = useAtom(entityFocusAtom)
 
     if (!entity) return null
 
@@ -23,7 +21,7 @@ const EntityEditor: React.FC<Props> = (props) => {
         updateEntity({ ...entity, [field]: event?.target?.value })
 
     return (
-        <EntityModal isOpen onClose={props.onClose}>
+        <EntityModal onClose={props.onClose}>
             <div className="formWrapper">
                 <div className="fieldsWrapper">
                     <label htmlFor="entityName">Name</label>

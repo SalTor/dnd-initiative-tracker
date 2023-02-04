@@ -1,61 +1,36 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { values, reduce, without, omit, get as getAttr, map, orderBy, toNumber } from 'lodash-es'
+import { useState } from 'react'
+import { orderBy } from 'lodash'
 import { atom, useAtom } from 'jotai'
-
-import { useSessionStorageState } from './utils/customHooks'
-
-import { CACHE_IDS } from './constants'
+import { atomWithStorage, RESET } from 'jotai/utils'
 
 import { IEntity } from './components/Entity/Entity'
 import EntityCreator from './components/EntityCreator/EntityCreator'
 import EntityEditor from './components/EntityEditor/EntityEditor'
 import Column from './components/Column/Column'
 
-import initialData from './initialData'
-
 import './App.scss'
 
 type EditEntityAtom = IEntity | null
-export const editEntityAtom = atom<EditEntityAtom>(null)
+export const entityFocusAtom = atom<EditEntityAtom>(null)
 
-const entitiesAtom = atom<IEntity[]>([])
+const entitiesAtom = atomWithStorage<IEntity[]>('entities', [])
 const sort = (c: IEntity[]) => orderBy(c, ['initiative'], ['desc'])
 const aliveEntitiesAtom = atom((get) => sort(get(entitiesAtom).filter((e) => e.hitpoints > 0)))
 const deadEntitiesAtom = atom((get) => sort(get(entitiesAtom).filter((e) => e.hitpoints <= 0)))
 
 const App = () => {
-    const [entities, setEntities] = useAtom(entitiesAtom)
-    const [aliveEntities] = useAtom<IEntity[]>(aliveEntitiesAtom)
-    const [deadEntities] = useAtom<IEntity[]>(deadEntitiesAtom)
+    const [, setEntities] = useAtom(entitiesAtom)
+    const [aliveEntities] = useAtom(aliveEntitiesAtom)
+    const [deadEntities] = useAtom(deadEntitiesAtom)
+    const [focusedEntity, setEntityFocus] = useAtom(entityFocusAtom)
     const [entityCreatorIsOpen, setEntityCreatorIsOpen] = useState(false)
-    const [entityBeingEdited, updateEntityBeingEdited] = useAtom(editEntityAtom)
-
-    useEffect(() => {
-        console.log({ entities, aliveEntities })
-    }, [entities, aliveEntities])
-    const onEntityCreated = (entity: IEntity): void => {
-        setEntities((c: IEntity[]) => [...c, entity])
-        setEntityCreatorIsOpen(false)
-    }
-
-    const handleRemoveEntity = (id: string): void => {
-        if (!id) return
-
-        setEntities((c: IEntity[]) => c.filter((_) => _.id !== id))
-
-        updateEntityBeingEdited(null)
-    }
 
     return (
         <div style={{ padding: 10 }}>
             <div className="appHeader">
                 <h1 role="presentation">Initiative Tracker</h1>
 
-                <button
-                    type="button"
-                    onClick={() => sessionStorage.removeItem(CACHE_IDS.initiative_tracker)}
-                    style={{ paddingRight: 15, paddingLeft: 15 }}
-                >
+                <button type="button" onClick={() => setEntities(RESET)} style={{ paddingRight: 15, paddingLeft: 15 }}>
                     Clear Cache
                 </button>
 
@@ -77,20 +52,27 @@ const App = () => {
                 </div>
             </div>
 
-            <EntityCreator
-                isOpen={entityCreatorIsOpen}
-                onClose={() => setEntityCreatorIsOpen(false)}
-                onEntityCreated={onEntityCreated}
-            />
+            {entityCreatorIsOpen && (
+                <EntityCreator
+                    onClose={() => setEntityCreatorIsOpen(false)}
+                    onEntityCreated={(entity: IEntity): void => {
+                        setEntities((c) => [...c, entity])
+                        setEntityCreatorIsOpen(false)
+                    }}
+                />
+            )}
 
             <EntityEditor
-                onClose={() => updateEntityBeingEdited(null)}
-                onEntityRemoved={handleRemoveEntity}
+                onClose={() => setEntityFocus(null)}
+                onEntityRemoved={(id: string): void => {
+                    if (!id) return
+
+                    setEntities((c) => c.filter((e) => e.id !== id))
+                    setEntityFocus(null)
+                }}
                 onSave={() => {
-                    setEntities((c) =>
-                        c.map((e) => (entityBeingEdited && e.id === entityBeingEdited.id ? entityBeingEdited : e)),
-                    )
-                    updateEntityBeingEdited(null)
+                    setEntities((c) => c.map((e) => (focusedEntity && e.id === focusedEntity.id ? focusedEntity : e)))
+                    setEntityFocus(null)
                 }}
             />
         </div>

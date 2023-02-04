@@ -1,9 +1,7 @@
 import cn from 'classnames'
 import { useAtom } from 'jotai'
 import styled from 'styled-components'
-import { editEntityAtom } from '../../App'
-
-import { ENTITY_TYPES } from '../../constants'
+import { entityFocusAtom } from '../../App'
 
 import './Entity.scss'
 
@@ -12,7 +10,13 @@ export interface IEntity {
     initiative: number
     name: string
     hitpoints: number
-    type: ENTITY_TYPES
+    maxHitpoints: number
+    type: EntityType
+}
+
+export enum EntityType {
+    Player = 'entity-type::player',
+    Enemy = 'entity-type::enemy',
 }
 
 const EntityDiv = styled.div``
@@ -22,9 +26,9 @@ type Props = {
 }
 
 const Entity: React.FC<Props> = (props) => {
-    const isType = (entity: IEntity, type: ENTITY_TYPES) => entity.type === type
-    const cssEntityType = isType(props.entity, ENTITY_TYPES.Player) ? 'm_player' : 'm_foe'
-    const [, setEntityBeingUpdated] = useAtom(editEntityAtom)
+    const isType = (entity: IEntity, type: EntityType) => entity.type === type
+    const cssEntityType = isType(props.entity, EntityType.Player) ? 'm_player' : 'm_foe'
+    const [, setEntityBeingUpdated] = useAtom(entityFocusAtom)
 
     return (
         <EntityDiv className={cn('entity')} onClick={() => setEntityBeingUpdated(props.entity)}>
