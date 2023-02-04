@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
-import cuid from 'cuid'
+import { v4 as uuid } from 'uuid'
 
 import { ENTITY_TYPES } from '../../constants'
+import { IEntity } from '../Entity/Entity'
 
 import EntityModal from '../EntityModal/EntityModal'
 
@@ -11,31 +12,31 @@ const initialFormState = {
     name: '',
     initiative: 0,
     hitpoints: 0,
-    type: ENTITY_TYPES.enemy,
+    type: ENTITY_TYPES.Enemy,
 }
 
 interface Props {
-    isOpen: boolean;
-    onClose: (next:boolean)=> void;
-    onEntityCreated: Entity
+    isOpen: boolean
+    onClose: (next: boolean) => void
+    onEntityCreated: (entity: IEntity) => void
 }
 
-const EntityCreator: React.FC<Props> = props => {
+const EntityCreator: React.FC<Props> = (props) => {
     const [formState, setFormState] = useState(initialFormState)
 
-    const handleInputChange = field => event => {
-        setFormState({
-            ...formState,
-            [field]: event.target.value,
-        })
-    }
+    const handleInputChange =
+        (field: string) =>
+        (event: React.ChangeEvent<HTMLInputElement>): void => {
+            setFormState({
+                ...formState,
+                [field]: event.target.value,
+            })
+        }
 
     const handleFormSubmit = () => {
-        props.onEntityCreated({ ...formState, id: cuid() })
+        props.onEntityCreated({ ...formState, id: uuid() })
         setFormState(initialFormState)
     }
-
-    const handleKeyDown = event => (event.key === 'Escape' ? handleFormSubmit : null)
 
     return (
         <EntityModal isOpen={props.isOpen} onClose={props.onClose}>
@@ -69,33 +70,29 @@ const EntityCreator: React.FC<Props> = props => {
                     />
 
                     <label htmlFor="playerOrFoe">
-                        {(type => (
-                            <input
-                                type="radio"
-                                onChange={handleInputChange('type')}
-                                checked={formState.type === type}
-                                name="type"
-                                value={type}
-                            />
-                        ))(ENTITY_TYPES.player)}{' '}
+                        <input
+                            type="radio"
+                            onChange={handleInputChange('type')}
+                            checked={formState.type === ENTITY_TYPES.Player}
+                            name="type"
+                            value={ENTITY_TYPES.Player}
+                        />{' '}
                         Player
                     </label>
 
                     <label htmlFor="playerOrFoe">
-                        {(type => (
-                            <input
-                                type="radio"
-                                onChange={handleInputChange('type')}
-                                checked={formState.type === type}
-                                name="type"
-                                value={type}
-                            />
-                        ))(ENTITY_TYPES.enemy)}{' '}
+                        <input
+                            type="radio"
+                            onChange={handleInputChange('type')}
+                            checked={formState.type === ENTITY_TYPES.Enemy}
+                            name="type"
+                            value={ENTITY_TYPES.Enemy}
+                        />{' '}
                         Foe
                     </label>
                 </div>
 
-                <button type="button" onClick={handleFormSubmit} onKeyDown={handleKeyDown}>
+                <button type="button" onClick={handleFormSubmit}>
                     Add Entity
                 </button>
             </div>
