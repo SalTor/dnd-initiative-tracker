@@ -1,4 +1,9 @@
-const initialData = {
+import { IEntity } from './components/Entity/Entity'
+const initialData: {
+    entities: Record<string, IEntity>;
+    columns: Record<string, { id: string; title: string; entityIds: string[] }>;
+    columnOrder: string[]
+} = {
     entities: {},
     columns: {
         column_1: {

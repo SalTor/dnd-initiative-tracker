@@ -1,12 +1,22 @@
 import React from 'react'
 import { isNil } from 'lodash-es'
 
+import {IEntity} from '../Entity/Entity'
 import EntityModal from '../EntityModal/EntityModal'
 
 import './EntityEditor.scss'
 
-const EntityEditor = props => {
+type Props = {
+    entityBeingEdited: IEntity;
+    onClose: () => void;
+    onEntityChanged: (entity: IEntity) => void;
+    onEntityRemoved: () => void;
+}
+
+const EntityEditor: React.FC<Props> = props => {
     const { entityBeingEdited } = props
+    if (!entityBeingEdited) return null
+
     const { id, name, initiative, hitpoints } = entityBeingEdited
 
     const handleChange = field => event => props.onEntityChanged({ ...entityBeingEdited, [field]: event.target.value })

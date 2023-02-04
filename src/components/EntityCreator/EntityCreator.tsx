@@ -14,7 +14,13 @@ const initialFormState = {
     type: ENTITY_TYPES.enemy,
 }
 
-const EntityCreator = props => {
+interface Props {
+    isOpen: boolean;
+    onClose: (next:boolean)=> void;
+    onEntityCreated: Entity
+}
+
+const EntityCreator: React.FC<Props> = props => {
     const [formState, setFormState] = useState(initialFormState)
 
     const handleInputChange = field => event => {

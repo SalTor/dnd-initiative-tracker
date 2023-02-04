@@ -1,11 +1,11 @@
-import React, { useState } from 'react'
-import { DragDropContext } from 'react-beautiful-dnd'
+import { useEffect, useState } from 'react'
 import { values, reduce, without, omit, get as getAttr, map, orderBy, toNumber } from 'lodash-es'
 
 import { useSessionStorageState } from './utils/customHooks'
 
 import { CACHE_IDS } from './constants'
 
+import { IEntity } from './components/Entity/Entity'
 import EntityCreator from './components/EntityCreator/EntityCreator'
 import EntityEditor from './components/EntityEditor/EntityEditor'
 import Column from './components/Column/Column'
@@ -16,69 +16,18 @@ import './App.scss'
 
 const App = () => {
     const [state, setState] = useSessionStorageState(initialData, CACHE_IDS.initiative_tracker)
+    const [entities, setEntities] = useState<IEntity[]>([])
+    const [aliveEntities, setAliveEntities] = useState<IEntity[]>([])
     const [entityCreatorIsOpen, setEntityCreatorIsOpen] = useState(false)
-    const [entityBeingEdited, updateEntityBeingEdited] = useState({})
+    const [entityBeingEdited, updateEntityBeingEdited] = useState<IEntity | null>(null)
 
-    const onDragEnd = result => {
-        const { destination, source, draggableId } = result
-
-        if (destination) {
-            const sameList = destination.droppableId === source.droppableId
-            const sameOrder = destination.index === source.index
-            if (sameList && sameOrder) {
-                return
-            }
-
-            const start = state.columns[source.droppableId]
-            const finish = state.columns[destination.droppableId]
-
-            if (start === finish) {
-                const newEntityIds = Array.from(start.entityIds)
-                newEntityIds.splice(source.index, 1)
-                newEntityIds.splice(destination.index, 0, draggableId)
-
-                const newColumn = {
-                    ...start,
-                    entityIds: newEntityIds,
-                }
-
-                setState({
-                    ...state,
-                    columns: {
-                        ...state.columns,
-                        [newColumn.id]: newColumn,
-                    },
-                })
-            } else {
-                const startEntityIds = Array.from(start.entityIds)
-                startEntityIds.splice(source.index, 1)
-                const newStart = {
-                    ...start,
-                    entityIds: startEntityIds,
-                }
-
-                const finishEntityIds = Array.from(finish.entityIds)
-                finishEntityIds.splice(destination.index, 0, draggableId)
-                const newFinish = {
-                    ...finish,
-                    entityIds: finishEntityIds,
-                }
-
-                setState({
-                    ...state,
-                    columns: {
-                        ...state.columns,
-                        [newStart.id]: newStart,
-                        [newFinish.id]: newFinish,
-                    },
-                })
-            }
-        } else {
-            return
-        }
-    }
-
-    const onEntityCreated = entity => {
+    useEffect(() => {
+        console.log({entities, aliveEntities})
+    }, [entities, aliveEntities])
+    const onEntityCreated = (entity: IEntity) => {
+        // todo: opportunity to move the entity list into jotai and let the modal add it there
+        setEntities(c=>([...c, entity]))
+        setAliveEntities(c=>([...c, entity]))
         const { column_1 } = state.columns
         setState({
             ...state,
@@ -97,7 +46,13 @@ const App = () => {
         setEntityCreatorIsOpen(false)
     }
 
-    const onOrderByInitiative = column_id => () => {
+    const onOrderByInitiative = (column_id: string) => () => {
+        // I don't think we need to order dead entities..
+        setAliveEntities(c=>{
+            const next = orderBy(c, _=>_.initiative)
+            console.log('onOrderByInitiative, next order', next)
+            return next
+        })
         const column = state.columns[column_id]
         const { entities } = state
         const vals = map(
@@ -120,9 +75,15 @@ const App = () => {
         })
     }
 
-    const entityFromState = entity => getAttr(state, `entities[${entity.id}]`) || {}
+    const entityFromState = (entity: IEntity | null) => entity ? getAttr(state, `entities[${entity.id}]`) : null
 
-    const handleUpdateEntity = updatedEntity => {
+    const handleUpdateEntity = (updatedEntity: IEntity) => {
+        setEntities(c=>{
+            const next = c.filter(_ => _.id !== updatedEntity.id)
+            next.push(updatedEntity)
+            return next
+        })
+
         const { id } = updatedEntity
         const { entities } = state
         setState({
@@ -136,8 +97,16 @@ const App = () => {
 
     const handleRemoveEntity = () => {
         const entity = entityBeingEdited
+        if (!entity) return
+
+        const filter = (c:IEntity[])=>c.filter(_=>_.id!==entity.id)
+        setEntities(filter)
+        // todo, based on alive/dead status of entity, filter appropriate list
+        //       or maybe hide an entity that is "removed" regardless of which list they're in
+        setAliveEntities(filter)
+
         const { entities, columns } = state
-        updateEntityBeingEdited({})
+        updateEntityBeingEdited(null)
         setState({
             ...state,
             columns: reduce(
@@ -181,34 +150,29 @@ const App = () => {
 
             <div className="formAndTracker">
                 <div className="draggableWrapper">
-                    <DragDropContext onDragEnd={onDragEnd}>
-                        <div className="test">
-                            {state.columnOrder.map(columnId => {
-                                const column = state.columns[columnId]
-                                const entities = map(column.entityIds, entityId => state.entities[entityId])
-                                let actionBtn = null
-                                if (columnId === 'column_1') {
-                                    actionBtn = (
-                                        <button type="button" onClick={onOrderByInitiative(column.id)}>
-                                            sort
-                                        </button>
-                                    )
-                                }
+                    <div className="test">
+                        {state.columnOrder.map((columnId: string) => {
+                            const column = state.columns[columnId]
+                            const entities = map(column.entityIds, entityId => state.entities[entityId])
+                            let actionBtn = (
+                                <button type="button" onClick={onOrderByInitiative(column.id)}>
+                                    sort
+                                </button>
+                            )
 
-                                return (
-                                    <Column
-                                        actionBtn={actionBtn}
-                                        key={column.id}
-                                        column={column}
-                                        entities={entities}
-                                        entityProps={{
-                                            onEditEntity: updateEntityBeingEdited,
-                                        }}
-                                    />
-                                )
-                            })}
-                        </div>
-                    </DragDropContext>
+                            return (
+                                <Column
+                                    actionBtn={actionBtn}
+                                    key={column.id}
+                                    column={column}
+                                    entities={entities}
+                                    entityProps={{
+                                        onEditEntity: updateEntityBeingEdited,
+                                    }}
+                                />
+                            )
+                        })}
+                    </div>
                 </div>
             </div>
 
@@ -220,7 +184,7 @@ const App = () => {
 
             <EntityEditor
                 entityBeingEdited={entityFromState(entityBeingEdited)}
-                onClose={() => updateEntityBeingEdited({})}
+                onClose={() => updateEntityBeingEdited(null)}
                 onEntityChanged={handleUpdateEntity}
                 onEntityRemoved={handleRemoveEntity}
             />
